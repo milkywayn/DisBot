@@ -1,42 +1,36 @@
-const { Client, GatewayIntentBits } = require("discord.js");
+const { Client, GatewayIntentBits, Events } = require("discord.js");
 const axios = require("axios");
 
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent
-  ]
+  intents: [GatewayIntentBits.Guilds]
 });
 
-client.once("ready", () => {
-  console.log(`Bot logged in as ${client.user.tag}`);
+client.once(Events.ClientReady, (c) => {
+  console.log(`Bot logged in as ${c.user.tag}`);
 });
 
-client.on("messageCreate", async message => {
-  if (message.author.bot) return;
+client.on(Events.InteractionCreate, async interaction => {
+  if (!interaction.isChatInputCommand()) return;
 
-  // !guild GuildName
-  if (message.content.startsWith("!guild")) {
-    const args = message.content.split(" ").slice(1);
-    if (!args.length) {
-      return message.reply("ギルド名を指定してね 👉 `!guild GuildName`");
-    }
+  if (interaction.commandName === "guild") {
+    const guildName = interaction.options.getString("name");
 
-    const guildName = args.join(" ");
+    // ★ ここが超重要
+    await interaction.deferReply();
 
     try {
       const url = `https://api.wynncraft.com/v3/guild/${encodeURIComponent(guildName)}`;
       const res = await axios.get(url);
       const g = res.data;
 
-      const online = Object.values(g.members).flatMap(rank =>
-        rank.filter(m => m.online)
-      ).length;
+      const online = Object.values(g.members)
+        .flatMap(rank => rank)
+        .filter(m => m.online).length;
 
-      const total = Object.values(g.members).flat().length;
+      const total = Object.values(g.members)
+        .flat().length;
 
-      message.reply(
+      await interaction.editReply(
         `🏰 **${g.name} [${g.prefix}]**\n` +
         `📈 Level: ${g.level}\n` +
         `⭐ XP: ${g.xp.toLocaleString()}\n` +
@@ -45,7 +39,8 @@ client.on("messageCreate", async message => {
       );
 
     } catch (err) {
-      message.reply("❌ ギルドが見つからない or APIエラー");
+      console.error(err);
+      await interaction.editReply("❌ ギルドが見つからない or APIエラー");
     }
   }
 });
