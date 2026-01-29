@@ -15,7 +15,7 @@ client.on(Events.InteractionCreate, async interaction => {
   if (interaction.commandName === "guild") {
     const guildName = interaction.options.getString("name");
 
-    // ★ ここが超重要
+    // Discord に「考え中です…」と最初に返す
     await interaction.deferReply();
 
     try {
@@ -23,12 +23,15 @@ client.on(Events.InteractionCreate, async interaction => {
       const res = await axios.get(url);
       const g = res.data;
 
-      const online = Object.values(g.members)
-        .flatMap(rank => rank)
-        .filter(m => m.online).length;
+      // ギルドが存在しない場合
+      if (!g || !g.members) {
+        return await interaction.editReply("❌ ギルドが見つかりません");
+      }
 
-      const total = Object.values(g.members)
-        .flat().length;
+      // メンバー情報を安全に取得
+      const allMembers = Object.values(g.members).flatMap(rank => Array.isArray(rank) ? rank : []);
+      const total = allMembers.length;
+      const online = allMembers.filter(m => m.online).length;
 
       await interaction.editReply(
         `🏰 **${g.name} [${g.prefix}]**\n` +
@@ -39,7 +42,7 @@ client.on(Events.InteractionCreate, async interaction => {
       );
 
     } catch (err) {
-      console.error(err);
+      console.error("Wynncraft API error:", err.message || err);
       await interaction.editReply("❌ ギルドが見つからない or APIエラー");
     }
   }
