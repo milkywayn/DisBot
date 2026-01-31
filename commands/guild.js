@@ -1,6 +1,15 @@
 const { EmbedBuilder } = require("discord.js");
 const axios = require("axios");
 
+const RANK_LABELS = {
+  owner: "👑 Owner",
+  chief: "⭐ Chief",
+  strategist: "🧠 Strategist",
+  captain: "🛡 Captain",
+  recruiter: "📣 Recruiter",
+  recruit: "👤 Recruit"
+};
+
 module.exports = {
   async execute(interaction) {
     const prefix = interaction.options.getString("prefix");
@@ -20,21 +29,28 @@ module.exports = {
       // Owner
       const owner = Object.keys(g.members.owner || {})[0] ?? "Unknown";
 
-      // メンバー集計 & オンライン一覧
-      const allMembers = [];
-      const onlineMembers = [];
+      // ランク別オンライン
+      const onlineByRank = {};
 
-      for (const rank of Object.values(g.members)) {
-        for (const [name, data] of Object.entries(rank)) {
-          allMembers.push(name);
-          if (data.online) onlineMembers.push(name);
+      for (const [rankKey, members] of Object.entries(g.members)) {
+        const online = [];
+
+        for (const [name, data] of Object.entries(members)) {
+          if (data.online) online.push(name);
+        }
+
+        if (online.length > 0) {
+          onlineByRank[rankKey] = online;
         }
       }
 
-      const onlineList =
-        onlineMembers.length > 0
-          ? onlineMembers.slice(0, 20).join(", ")
-          : "なし";
+      let onlineText = "";
+      for (const [rank, members] of Object.entries(onlineByRank)) {
+        const label = RANK_LABELS[rank] ?? rank;
+        onlineText += `**${label}**\n${members.join(", ")}\n\n`;
+      }
+
+      if (!onlineText) onlineText = "なし";
 
       const embed = new EmbedBuilder()
         .setTitle(`🏰 ${g.name} [${g.prefix}]`)
@@ -45,8 +61,8 @@ module.exports = {
           { name: "🌍 Territories", value: String(g.territories), inline: true },
           { name: "⚔ Wars", value: String(g.wars), inline: true },
           {
-            name: `🟢 Online Members (${onlineMembers.length})`,
-            value: onlineList
+            name: "🟢 Online Members",
+            value: onlineText
           }
         )
         .setFooter({ text: "Data from Wynncraft API" });
