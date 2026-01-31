@@ -18,27 +18,34 @@ client.on(Events.InteractionCreate, async interaction => {
     await interaction.deferReply();
 
     try {
-      const url = `https://api.wynncraft.com/v3/guild/prefix/${encodeURIComponent(prefix)}`;
-      const res = await axios.get(url);
-      const g = res.data;
+  const url = `https://api.wynncraft.com/v3/guild/prefix/${encodeURIComponent(prefix)}`;
 
-      if (!g || !g.members) {
-        return await interaction.editReply("❌ ギルドが見つかりません");
-      }
+  const res = await axios.get(url, {
+    headers: {
+      "User-Agent": "DisBot/1.0 (Discord Bot)"
+    }
+  });
 
-      const allMembers = Object.values(g.members)
-        .flatMap(rank => Object.values(rank));
+  const g = res.data;
 
-      const total = allMembers.length;
-      const online = allMembers.filter(m => m.online).length;
+  if (!g || !g.members) {
+    return await interaction.editReply("❌ ギルドが見つかりません");
+  }
 
-      await interaction.editReply(
-        `🏰 **${g.name} [${g.prefix}]**\n` +
-        `📈 Level: ${g.level}\n` +
-        `🌍 Territories: ${g.territories}\n` +
-        `👥 Members: ${total}\n` +
-        `🟢 Online: ${online}`
-      );
+  const allMembers = Object.values(g.members)
+    .flatMap(rank => Object.values(rank));
+
+  const total = allMembers.length;
+  const online = allMembers.filter(m => m.online).length;
+
+  await interaction.editReply(
+    `🏰 **${g.name} [${g.prefix}]**\n` +
+    `📈 Level: ${g.level}\n` +
+    `🌍 Territories: ${g.territories}\n` +
+    `👥 Members: ${total}\n` +
+    `🟢 Online: ${online}`
+  );
+
 
     } catch (err) {
       console.error("Wynncraft API error:", err.message || err);
