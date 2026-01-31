@@ -13,27 +13,41 @@ module.exports = {
       });
 
       const g = res.data;
-
       if (!g || !g.members) {
         return interaction.editReply("❌ ギルドが見つかりません");
       }
 
-      // メンバー集計
-      const allMembers = Object.values(g.members)
-        .flatMap(rank => Object.values(rank));
+      // Owner
+      const owner = Object.keys(g.members.owner || {})[0] ?? "Unknown";
 
-      const total = allMembers.length;
-      const online = allMembers.filter(m => m.online).length;
+      // メンバー集計 & オンライン一覧
+      const allMembers = [];
+      const onlineMembers = [];
+
+      for (const rank of Object.values(g.members)) {
+        for (const [name, data] of Object.entries(rank)) {
+          allMembers.push(name);
+          if (data.online) onlineMembers.push(name);
+        }
+      }
+
+      const onlineList =
+        onlineMembers.length > 0
+          ? onlineMembers.slice(0, 20).join(", ")
+          : "なし";
 
       const embed = new EmbedBuilder()
         .setTitle(`🏰 ${g.name} [${g.prefix}]`)
         .setColor(0x00bfff)
         .addFields(
-          { name: "📈 Level", value: String(g.level), inline: true },
-          { name: "⭐ XP Progress", value: `${g.xpPercent}%`, inline: true },
+          { name: "👑 Owner", value: owner, inline: true },
+          { name: "📈 Level", value: `${g.level} [${g.xpPercent}%]`, inline: true },
           { name: "🌍 Territories", value: String(g.territories), inline: true },
           { name: "⚔ Wars", value: String(g.wars), inline: true },
-          { name: "👥 Members", value: `${online} / ${total}`, inline: true }
+          {
+            name: `🟢 Online Members (${onlineMembers.length})`,
+            value: onlineList
+          }
         )
         .setFooter({ text: "Data from Wynncraft API" });
 
