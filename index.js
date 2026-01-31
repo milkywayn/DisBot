@@ -24,8 +24,10 @@ client.on(Events.InteractionCreate, async interaction => {
 
       const res = await axios.get(url, {
         headers: {
-          "User-Agent": "DisBot/1.0 (Discord Bot)"
-        }
+          "User-Agent": "DisBot/1.0 (Discord Bot)",
+          "Accept": "application/json"
+        },
+        timeout: 10000
       });
 
       console.log("API OK");
