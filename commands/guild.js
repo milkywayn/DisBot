@@ -44,8 +44,11 @@ module.exports = {
 
           if (data.online) {
             onlineCount++;
-            online.push(`${name} (${data.server ?? "?"})`);
-          }
+            const server = data.server ?? "?";
+            const wars = Number.isInteger(data.wars) ? data.wars : 0;
+            online.push(`${name} (${server} | ${wars} wars)`);
+        }
+
         }
 
         if (online.length > 0) {
@@ -64,7 +67,7 @@ module.exports = {
       const owner = Object.keys(g.members.owner || {})[0] ?? "Unknown";
 
       const embed = new EmbedBuilder()
-        .setTitle(`🏰 ${g.name} [${g.prefix}]`)
+        .setTitle(`${g.name} [${g.prefix}]`)
         .setColor(0x00bfff)
         .addFields(
           { name: "👑 Owner", value: owner, inline: true },
