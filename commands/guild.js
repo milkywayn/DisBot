@@ -1,6 +1,15 @@
 const { EmbedBuilder } = require("discord.js");
 const axios = require("axios");
 
+const RANK_ORDER = [
+  "owner",
+  "chief",
+  "strategist",
+  "captain",
+  "recruiter",
+  "recruit"
+];
+
 const RANK_LABELS = {
   owner: "👑 Owner",
   chief: "⭐ Chief",
@@ -16,27 +25,27 @@ module.exports = {
     await interaction.deferReply();
 
     try {
-      const url = `https://api.wynncraft.com/v3/guild/prefix/${encodeURIComponent(prefix)}`;
-      const res = await axios.get(url, {
-        headers: { "User-Agent": "DisBot/1.0" }
-      });
+      const res = await axios.get(
+        `https://api.wynncraft.com/v3/guild/prefix/${encodeURIComponent(prefix)}`,
+        { headers: { "User-Agent": "DisBot/1.0" } }
+      );
 
       const g = res.data;
-      if (!g || !g.members) {
-        return interaction.editReply("❌ ギルドが見つかりません");
-      }
 
-      // Owner
-      const owner = Object.keys(g.members.owner || {})[0] ?? "Unknown";
-
-      // ランク別オンライン
+      let totalMembers = 0;
+      let onlineCount = 0;
       const onlineByRank = {};
 
       for (const [rankKey, members] of Object.entries(g.members)) {
         const online = [];
 
         for (const [name, data] of Object.entries(members)) {
-          if (data.online) online.push(name);
+          totalMembers++;
+
+          if (data.online) {
+            onlineCount++;
+            online.push(`${name} (${data.server ?? "?"})`);
+          }
         }
 
         if (online.length > 0) {
@@ -45,12 +54,14 @@ module.exports = {
       }
 
       let onlineText = "";
-      for (const [rank, members] of Object.entries(onlineByRank)) {
-        const label = RANK_LABELS[rank] ?? rank;
-        onlineText += `**${label}**\n${members.join(", ")}\n\n`;
+      for (const rank of RANK_ORDER) {
+        if (!onlineByRank[rank]) continue;
+        onlineText += `**${RANK_LABELS[rank]}**\n${onlineByRank[rank].join(", ")}\n\n`;
       }
 
       if (!onlineText) onlineText = "なし";
+
+      const owner = Object.keys(g.members.owner || {})[0] ?? "Unknown";
 
       const embed = new EmbedBuilder()
         .setTitle(`🏰 ${g.name} [${g.prefix}]`)
@@ -61,7 +72,7 @@ module.exports = {
           { name: "🌍 Territories", value: String(g.territories), inline: true },
           { name: "⚔ Wars", value: String(g.wars), inline: true },
           {
-            name: "🟢 Online Members",
+            name: `🟢 Online Members : ${onlineCount}/${totalMembers}`,
             value: onlineText
           }
         )
