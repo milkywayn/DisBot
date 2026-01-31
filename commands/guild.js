@@ -1,21 +1,15 @@
 const { EmbedBuilder } = require("discord.js");
 const axios = require("axios");
 
-// プレイヤー war count（失敗しても 0）
+// プレイヤー wars（globalData.wars）
 async function fetchPlayerWarCount(player) {
   try {
     const res = await axios.get(
-      `https://api.wynncraft.com/v3/player/${encodeURIComponent(player)}/characters`
+      `https://api.wynncraft.com/v3/player/${encodeURIComponent(player)}`,
+      { headers: { "User-Agent": "DiscordBot/1.0" } }
     );
 
-    const chars = Object.values(res.data.data || {});
-    let total = 0;
-
-    for (const c of chars) {
-      if (typeof c.wars === "number") total += c.wars;
-    }
-
-    return total;
+    return res.data?.globalData?.wars ?? 0;
   } catch {
     return 0;
   }
@@ -66,7 +60,7 @@ module.exports = {
       }
     }
 
-    // wars（最大 15 人までに制限 → API 落ち防止）
+    // オンラインプレイヤー取得（API負荷対策で最大15人）
     const onlineList = Object.values(onlineByRank).flat().slice(0, 15);
     const warCounts = await Promise.all(
       onlineList.map(p => fetchPlayerWarCount(p.name))
@@ -85,6 +79,7 @@ module.exports = {
         warIndex++;
         onlineText += `• ${p.name} (${p.server} | ${wars} wars)\n`;
       }
+
       onlineText += "\n";
     }
 
@@ -102,7 +97,8 @@ module.exports = {
           name: `🟢 Online Members : ${onlineCount}/${totalMembers}`,
           value: onlineText
         }
-      );
+      )
+      .setFooter({ text: "Data from Wynncraft API" });
 
     await interaction.editReply({ embeds: [embed] });
   }
