@@ -13,37 +13,36 @@ client.on(Events.InteractionCreate, async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
   if (interaction.commandName === "guild") {
-    const guildName = interaction.options.getString("name");
+    const prefix = interaction.options.getString("prefix");
 
-    // Discord に「考え中です…」と最初に返す
     await interaction.deferReply();
 
     try {
-      const url = `https://api.wynncraft.com/v3/guild/prefix/${encodeURIComponent(guildName)}`;
+      const url = `https://api.wynncraft.com/v3/guild/prefix/${encodeURIComponent(prefix)}`;
       const res = await axios.get(url);
       const g = res.data;
 
-      // ギルドが存在しない場合
       if (!g || !g.members) {
         return await interaction.editReply("❌ ギルドが見つかりません");
       }
 
-      // メンバー情報を安全に取得
-      const allMembers = Object.values(g.members).flatMap(rank => Array.isArray(rank) ? rank : []);
+      const allMembers = Object.values(g.members)
+        .flatMap(rank => Object.values(rank));
+
       const total = allMembers.length;
       const online = allMembers.filter(m => m.online).length;
 
       await interaction.editReply(
         `🏰 **${g.name} [${g.prefix}]**\n` +
         `📈 Level: ${g.level}\n` +
-        `⭐ XP: ${g.xp.toLocaleString()}\n` +
+        `🌍 Territories: ${g.territories}\n` +
         `👥 Members: ${total}\n` +
         `🟢 Online: ${online}`
       );
 
     } catch (err) {
       console.error("Wynncraft API error:", err.message || err);
-      await interaction.editReply("❌ ギルドが見つからない or APIエラー");
+      await interaction.editReply("❌ ギルドが見つかりません or APIエラー");
     }
   }
 });

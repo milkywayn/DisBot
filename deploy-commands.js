@@ -7,8 +7,8 @@ const commands = [
     .setDescription("Wynncraftのギルド情報を表示")
     .addStringOption(option =>
       option
-        .setName("name")
-        .setDescription("ギルド名")
+        .setName("prefix")
+        .setDescription("ギルドのprefix")
         .setRequired(true)
     )
     .toJSON()
