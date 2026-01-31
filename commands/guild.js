@@ -1,14 +1,13 @@
 const { EmbedBuilder } = require("discord.js");
 const axios = require("axios");
 
-// プレイヤー wars（globalData.wars）
+// プレイヤーの wars（globalData.wars）取得
 async function fetchPlayerWarCount(player) {
   try {
     const res = await axios.get(
       `https://api.wynncraft.com/v3/player/${encodeURIComponent(player)}`,
       { headers: { "User-Agent": "DiscordBot/1.0" } }
     );
-
     return res.data?.globalData?.wars ?? 0;
   } catch {
     return 0;
@@ -35,6 +34,14 @@ module.exports = {
       return interaction.editReply("❌ ギルドが見つかりません");
     }
 
+    // 👑 Owner 正しい取得方法
+    const ownerEntry = Object.entries(g.members.owner ?? {})[0];
+    const ownerName = ownerEntry?.[0] ?? "Unknown";
+    const ownerServer = ownerEntry?.[1]?.server;
+    const ownerText = ownerServer
+      ? `${ownerName} (${ownerServer})`
+      : ownerName;
+
     let totalMembers = 0;
     let onlineCount = 0;
 
@@ -60,7 +67,7 @@ module.exports = {
       }
     }
 
-    // オンラインプレイヤー取得（API負荷対策で最大15人）
+    // オンラインプレイヤー（API負荷対策：最大15人）
     const onlineList = Object.values(onlineByRank).flat().slice(0, 15);
     const warCounts = await Promise.all(
       onlineList.map(p => fetchPlayerWarCount(p.name))
@@ -86,11 +93,11 @@ module.exports = {
     if (!onlineText) onlineText = "なし";
 
     const embed = new EmbedBuilder()
-      .setTitle(`${g.name} [${g.prefix}]`)
+      .setTitle(`🏰 ${g.name} [${g.prefix}]`)
       .setColor(0x00bfff)
       .addFields(
+        { name: "👑 Owner", value: ownerText, inline: true },
         { name: "📈 Level", value: `${g.level} [${g.xpPercent}%]`, inline: true },
-        { name: "👑 Owner", value: g.owner?.name ?? "Unknown", inline: true },
         { name: "🌍 Territories", value: String(g.territories), inline: true },
         { name: "⚔ Wars", value: String(g.wars), inline: true },
         {
