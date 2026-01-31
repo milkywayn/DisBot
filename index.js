@@ -19,7 +19,7 @@ client.on(Events.InteractionCreate, async interaction => {
     await interaction.deferReply();
 
     try {
-      const url = `https://api.wynncraft.com/v3/guild/${encodeURIComponent(guildName)}`;
+      const url = `https://api.wynncraft.com/v3/guild/prefix/${encodeURIComponent(guildName)}`;
       const res = await axios.get(url);
       const g = res.data;
 
