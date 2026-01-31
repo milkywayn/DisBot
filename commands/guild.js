@@ -93,7 +93,7 @@ module.exports = {
     if (!onlineText) onlineText = "なし";
 
     const embed = new EmbedBuilder()
-      .setTitle(`🏰 ${g.name} [${g.prefix}]`)
+      .setTitle(`${g.name} [${g.prefix}]`)
       .setColor(0x00bfff)
       .addFields(
         { name: "👑 Owner", value: ownerText, inline: true },
