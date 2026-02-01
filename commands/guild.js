@@ -148,7 +148,7 @@ if (!onlineText) onlineText = "なし";
 
 
     const embed = new EmbedBuilder()
-      .setTitle(`${g.name} [${g.prefix}]`)
+      .setTitle(`<:OWW:1295293795406975090>${g.name} [${g.prefix}]`)
       .setColor(0x00bfff)
       .addFields(
         { name: "👑 Owner", value: ownerText, inline: true },
