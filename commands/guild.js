@@ -138,7 +138,7 @@ module.exports = {
         { name: "👑 Owner", value: ownerText, inline: true },
         { name: "📈 Level", value: `${g.level} [${g.xpPercent}%]`, inline: true },
         { name: "🌍 Territories", value: String(g.territories), inline: true },
-        { name: "⚔ Wars", value: String(g.wars), inline: true },
+        { name: "⚔️ Wars", value: String(g.wars), inline: true },
         { name: `🟢 Online Members : ${onlineCount}/${totalMembers}`, value: onlineText }
       )
       .setFooter({ text: "Data from Wynncraft API" });
