@@ -128,8 +128,8 @@ module.exports = {
       for (const p of players) {
         const wars = p.wars ?? 0;
         // wars 1000以上は強調
-        const warsText = wars >= 1000 ? `⚔️ **${wars} wars**` : `${wars} wars`;
-        onlineText += `• ${p.name} (${p.server} | ${p.wars} wars)\n`;
+        const warsText = wars >= 1000 ? `**${wars} wars**` : `${wars} wars`
+        onlineText += `● ${p.name} (${p.server} | ${p.wars} wars)\n`;
       }
       onlineText += "\n";
     }
