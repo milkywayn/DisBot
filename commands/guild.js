@@ -120,25 +120,21 @@ module.exports = {
     const ownerText = ownerServer ? `${ownerName} (${ownerServer})` : ownerName;
 
     // オンラインメンバー文字列作成
-let onlineText = "";
-for (const [rank, players] of Object.entries(onlineByRank)) {
-  if (!players.length) continue;
+    let onlineText = "";
+    for (const [rank, players] of Object.entries(onlineByRank)) {
+      if (!players.length) continue;
+      // ランク名は太字
+      onlineText += `**${rank.toUpperCase()}**\n`;
 
-  // ランク名は太字
-  onlineText += `**${rank.toUpperCase()}**\n`;
+      for (const p of players) {
+        const wars = p.wars ?? 0;
 
-  for (const p of players) {
-    const wars = p.wars ?? 0;
-
-    // wars 1000以上は太字で強調
-    const warsText = wars >= 1000 ? `**${wars} wars**` : `${wars} wars`;
-
-    onlineText += `• ${p.name} (${p.server} | ${warsText})\n`;
-  }
-
-  onlineText += "\n";
-}
-
+        // wars 1000以上は強調
+        const warsText = wars >= 1000 ? `**${wars} wars**` : `${wars} wars`;
+        onlineText += `• ${p.name} (${p.server} | ${p.wars} wars)\n`;
+      }
+      onlineText += "\n";
+    }
     if (!onlineText) onlineText = "なし";
 
     const embed = new EmbedBuilder()
