@@ -153,7 +153,7 @@ if (!onlineText) onlineText = "なし";
       .addFields(
         { name: "<:OWW:1295293795406975090> Owner", value: ownerText, inline: true },
         { name: "<:poteti:1467555934199873680> Level", value: `${g.level} [${g.xpPercent}%]`, inline: true },
-        { name: "🌍 Territories", value: String(g.territories), inline: true },
+        { name: "<:potatoes:1467562706914644139> Territories", value: String(g.territories), inline: true },
         { name: "⚔️ Wars", value: String(g.wars), inline: true },
         { name: `🟢 Online Members : ${onlineCount}/${totalMembers}`, value: onlineText }
       )
