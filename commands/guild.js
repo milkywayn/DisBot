@@ -132,7 +132,7 @@ for (const [rank, players] of Object.entries(onlineByRank)) {
     // wars 1000以上は強調
     const warsText =
       wars >= 1000
-        ? `⚔️ **${wars} wars**`
+        ? `**${wars} wars**`
         : `${wars} wars`;
 
     // 名前はコード化して _ を無効化
