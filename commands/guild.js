@@ -148,10 +148,10 @@ if (!onlineText) onlineText = "なし";
 
 
     const embed = new EmbedBuilder()
-      .setTitle(`<:OWW:1295293795406975090>${g.name} [${g.prefix}]`)
+      .setTitle(`<:sensya:1467551514058031397>${g.name} [${g.prefix}]`)
       .setColor(0x00bfff)
       .addFields(
-        { name: "<:OWW:1295293795406975090> Owner", value: ownerText, inline: true },
+        { name: "<:sensya:1467551514058031397> Owner", value: ownerText, inline: true },
         { name: "⭐️ Level", value: `${g.level} [${g.xpPercent}%]`, inline: true },
         { name: "🌍 Territories", value: String(g.territories), inline: true },
         { name: "⚔️ Wars", value: String(g.wars), inline: true },
