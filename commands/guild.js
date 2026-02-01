@@ -148,12 +148,12 @@ if (!onlineText) onlineText = "なし";
 
 
     const embed = new EmbedBuilder()
-      .setTitle(`<:sensya:1467551514058031397>${g.name} [${g.prefix}]`)
+      .setTitle(`${g.name} [${g.prefix}]`)
       .setColor(0x00bfff)
       .addFields(
-        { name: "<:OWW:1295293795406975090> Owner", value: ownerText, inline: true },
+        { name: "<:crown:1467582546014638100> Owner", value: ownerText, inline: true },
         { name: "<:poteti:1467555934199873680> Level", value: `${g.level} [${g.xpPercent}%]`, inline: true },
-        { name: "<:potatoes:1467562706914644139> Territories", value: String(g.territories), inline: true },
+        { name: "<:territory:1467579386856476803> Territories", value: String(g.territories), inline: true },
         { name: "⚔️ Wars", value: String(g.wars), inline: true },
         { name: `🟢 Online Members : ${onlineCount}/${totalMembers}`, value: onlineText }
       )
