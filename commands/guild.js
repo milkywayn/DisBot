@@ -151,7 +151,7 @@ if (!onlineText) onlineText = "なし";
       .setTitle(`<:OWW:1295293795406975090>${g.name} [${g.prefix}]`)
       .setColor(0x00bfff)
       .addFields(
-        { name: "👑 Owner", value: ownerText, inline: true },
+        { name: "<:OWW:1295293795406975090> Owner", value: ownerText, inline: true },
         { name: "⭐️ Level", value: `${g.level} [${g.xpPercent}%]`, inline: true },
         { name: "🌍 Territories", value: String(g.territories), inline: true },
         { name: "⚔️ Wars", value: String(g.wars), inline: true },
