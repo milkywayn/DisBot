@@ -124,7 +124,11 @@ module.exports = {
     for (const [rank, players] of Object.entries(onlineByRank)) {
       if (!players.length) continue;
       onlineText += `**${rank.toUpperCase()}**\n`;
+
       for (const p of players) {
+        const wars = p.wars ?? 0;
+        // wars 1000以上はコードブロック風に強調
+        const warsText = wars >= 1000 ? `\`${wars} wars\`` : `${wars} wars`;
         onlineText += `• ${p.name} (${p.server} | ${p.wars} wars)\n`;
       }
       onlineText += "\n";
@@ -136,7 +140,7 @@ module.exports = {
       .setColor(0x00bfff)
       .addFields(
         { name: "👑 Owner", value: ownerText, inline: true },
-        { name: "📈 Level", value: `${g.level} [${g.xpPercent}%]`, inline: true },
+        { name: "⭐️ Level", value: `${g.level} [${g.xpPercent}%]`, inline: true },
         { name: "🌍 Territories", value: String(g.territories), inline: true },
         { name: "⚔️ Wars", value: String(g.wars), inline: true },
         { name: `🟢 Online Members : ${onlineCount}/${totalMembers}`, value: onlineText }
